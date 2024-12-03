@@ -248,7 +248,7 @@ def pool_map(
 ) -> Iterator[Any]:
     """Run a function with multiprocessing."""
 
-    processes = multiplier * cpu_count() if multiplier else None
+    processes = int((multiplier or 0.7) * cpu_count())
     iterable = ((method, item, method_args, method_kw) for item in items)
     context = get_context('spawn')
     with context.Pool(processes, initializer=_initializer) as pool:

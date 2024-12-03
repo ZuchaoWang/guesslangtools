@@ -419,7 +419,7 @@ def _extract_files(config: Config, df: pd.DataFrame) -> pd.DataFrame:
 
     results = []
     pool = pool_map(
-        _extract_from_repository, simple_groups, config, multiplier=2
+        _extract_from_repository, simple_groups, config
     )
     for index, grouped_results in enumerate(pool, 1):
         results.append(grouped_results)
