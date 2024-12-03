@@ -264,13 +264,16 @@ def split(config: Config) -> None:
         by_language = repo[repo['repository_language'] == lang]
         total = len(by_language)
         if total < MIN_REPOSITORIES:
-            raise RuntimeError(
+            LOGGER.warning(
                 f'Need more than {MIN_REPOSITORIES}, '
                 f'only {total} repositories usable for language {lang}'
             )
-
-        nb_test = max(int(total*test_ratio), 1)
-        nb_valid = max(int(total*valid_ratio), 1)
+            nb_test = max(int(total*test_ratio), 0)
+            nb_valid = max(int(total*valid_ratio), 0)
+        else:
+            nb_test = max(int(total*test_ratio), 1)
+            nb_valid = max(int(total*valid_ratio), 1)
+        
         nb_test_valid = nb_test + nb_valid
 
         test = by_language[:nb_test]
@@ -292,8 +295,7 @@ def split(config: Config) -> None:
 
     for name, repository in repositories.items():
         if not len(repository):
-            LOGGER.error(f'No repositories available for {name}')
-            raise RuntimeError(f'No repositories for category: {name}')
+            LOGGER.warning(f'No repositories available for {name}')
 
     repo = pd.concat(repositories.values())
     files = pd.merge(files, repo, on=repo_columns)
